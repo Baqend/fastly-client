@@ -28,4 +28,4 @@ deploy:
   stage: deploy
   script: gradle publishAllPublicationsToGitlabRepository
   only:
-    - master
+    - main
