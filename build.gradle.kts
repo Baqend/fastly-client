@@ -90,6 +90,19 @@ publishing {
         //                password = System.getenv("MAVEN_PASSWORD")
         //            }
         //        }
+
+        maven {
+            name = "Gitlab"
+            url = uri("https://gitlab.orestes.info/api/v4/projects/4/packages/maven")
+            credentials(HttpHeaderCredentials::class) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                create("header", HttpHeaderAuthentication::class)
+            }
+        }
+
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Baqend/fastly-client")
