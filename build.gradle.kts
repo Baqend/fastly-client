@@ -1,5 +1,4 @@
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
     id("pl.allegro.tech.build.axion-release") version "1.3.2"
     kotlin("jvm") version "1.6.10"
     `maven-publish`
@@ -49,50 +48,24 @@ tasks.test {
     }
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+
 publishing {
     publications {
-        create("shadow", MavenPublication::class.java) {
-            project.shadow.component(this)
-            pom {
-                name.set("fastly-client")
-                description.set("A client to interact with fastly dictionaries")
-                url.set("https://github.com/Baqend/fastly-client")
-
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://github.com/Baqend/fastly-client/blob/master/LICENSE")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("com.baqend")
-                        name.set("Baqend GmbH")
-                        email.set("info@baqend.com")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:https://github.com/Baqend/fastly-client")
-                    developerConnection.set("scm:git:https://github.com/Baqend/fastly-client")
-                    url.set("https://github.com/Baqend/fastly-client")
-                }
-            }
+        create(project.name, MavenPublication::class.java) {
+            groupId = project.group as String
+            artifactId = project.name
+            version = project.version as String
+            from(components["java"])
         }
     }
 
     repositories {
-        // TODO(jd): For now we only publish to GitHub Packages until the library is ready for the big crowd
-        //        maven {
-        //            name = "OSSRH"
-        //            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        //            credentials {
-        //                username = System.getenv("MAVEN_USERNAME")
-        //                password = System.getenv("MAVEN_PASSWORD")
-        //            }
-        //        }
-
         maven {
-            name = "Gitlab"
             url = uri("${System.getenv("CI_API_V4_URL")}/projects/151/packages/maven")
             credentials(HttpHeaderCredentials::class) {
                 name = "Job-Token"
@@ -102,18 +75,5 @@ publishing {
                 create("header", HttpHeaderAuthentication::class)
             }
         }
-
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Baqend/fastly-client")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
     }
 }
-
-// signing {
-//    sign(publishing.publications["fastlyClient"])
-// }

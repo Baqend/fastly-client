@@ -26,6 +26,6 @@ test:
 
 deploy:
   stage: deploy
-  script: gradle publishAllPublicationsToGitlabRepository
+  script: gradle publish
   only:
     - main
