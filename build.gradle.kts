@@ -93,7 +93,7 @@ publishing {
 
         maven {
             name = "Gitlab"
-            url = uri("https://gitlab.orestes.info/api/v4/groups/325/packages/maven")
+            url = uri("${System.getenv("CI_API_V4_URL")}/projects/151/packages/maven")
             credentials(HttpHeaderCredentials::class) {
                 name = "Job-Token"
                 value = System.getenv("CI_JOB_TOKEN")
