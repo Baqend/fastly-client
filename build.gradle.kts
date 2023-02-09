@@ -1,13 +1,29 @@
 plugins {
-    id("pl.allegro.tech.build.axion-release") version "1.3.2"
-    kotlin("jvm") version "1.6.10"
+    base
+    idea
     `maven-publish`
     java
-    signing
+    kotlin("jvm") version "1.8.10"
+    id("net.researchgate.release") version "3.0.2"
+    id("com.diffplug.spotless-changelog") version "3.0.1"
 }
 
-group = "com.baqend.fastly"
-version = scmVersion.version
+spotlessChangelog {
+    ifFoundBumpBreaking("**BREAKING**")
+    ifFoundBumpAdded("### Added")
+    changelogFile("CHANGELOG.md")
+    setAppendDashSnapshotUnless_dashPrelease(true)
+    tagPrefix("v")
+    commitMessage("Release v{{version}}")
+    remote("origin")
+    branch("release")
+}
+println("SpotlessChangelog Version Next: ${spotlessChangelog.versionNext}  Last: ${spotlessChangelog.versionLast}")
+
+version = spotlessChangelog.versionNext
+val isSnapshot = version.toString().endsWith("-SNAPSHOT")
+
+println("Version: $version")
 
 repositories {
     mavenCentral()
@@ -76,5 +92,25 @@ publishing {
                 create("header", HttpHeaderAuthentication::class)
             }
         }
+    }
+}
+
+configure<net.researchgate.release.ReleaseExtension> {
+    preTagCommitMessage.set("pre tag commit [ci skip]:")
+    tagCommitMessage.set("creating tag:")
+    newVersionCommitMessage.set("new version commit [ci skip]:")
+    buildTasks.set(listOf("changelogBump"))
+    ignoredSnapshotDependencies.set(listOf("net.researchgate:gradle-release"))
+    // this is used by the plugin to select the part of the current version to update
+    versionPatterns = mapOf(
+        // with this pattern we select the patch version
+        """(\d+)([^\d]*$)""" to KotlinClosure2<java.util.regex.Matcher, Project, String>(
+            // this closure replaces the current patch version with: patch + 1 and "-SNAPSHOT" appended
+            { matcher, _ -> matcher.replaceAll("${(matcher.group(0).toInt()) + 1}-SNAPSHOT") }
+        ),
+    )
+    with(git) {
+        requireBranch.set("main")
+        pushToRemote.set("origin")
     }
 }
