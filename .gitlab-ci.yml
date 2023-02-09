@@ -1,4 +1,15 @@
-image: gradle:alpine
+image: gradle:jdk11
+
+variables:
+  CI: "true"
+
+include:
+  - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
+
+stages:  # List of stages for jobs, and their order of execution
+  - build
+  - test
+  - publish
 
 before_script:
   - GRADLE_USER_HOME="$(pwd)/.gradle"
@@ -24,8 +35,12 @@ test:
       - build
       - .gradle
 
-deploy:
-  stage: deploy
-  script: gradle publish
-  only:
-    - main
+# everytime we merge a branch into the main
+release:
+  environment: production
+  stage: publish
+  script:
+    - gradle release
+    - gradle publish
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
