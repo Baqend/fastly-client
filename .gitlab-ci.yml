@@ -43,6 +43,9 @@ release:
   environment: production
   stage: publish
   script:
+    - git config user.name "Gitlab Ci/CD pipeline"
+    - git config user.email no-reply@baqend.com
+    - GIT_URL=`echo $CI_PROJECT_URL | sed -e "s|https://|https://oauth2:$PipelineReleasesPAT@|g"` # add authentication via token
     - gradle release -Prelease=true
     - gradle publish
   rules:
