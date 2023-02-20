@@ -43,7 +43,7 @@ release:
   environment: production
   stage: publish
   script:
-    - gradle release
+    - gradle release -Prelease=true
     - gradle publish
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
