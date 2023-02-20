@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Method to request the currently active version for a given service.
 
-## [0.0.1] - 2023-02-08
+## [0.1.0] - 2023-02-08
 ### Added
 - Initial release
