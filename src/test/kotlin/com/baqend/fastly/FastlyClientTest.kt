@@ -153,6 +153,14 @@ class FastlyClientTest {
         }
     }
 
+    @Test
+    fun `test getting active service version`(){
+        val client = FastlyClient(URI("http://localhost:$SERVER_PORT"), arrayOf("1234"))
+        val service = client.getService("someserviceID")
+        println(service)
+        assertEquals(client.getActiveServiceVersionNumber(service!!), 1)
+
+    }
     @ParameterizedTest
     @EnumSource
     fun `test retry for service requests 500er`(method: HMethods) {
@@ -621,7 +629,7 @@ class FastlyClientTest {
                                             "updated_at": "2016-04-27T19:40:49+00:00",
                                             "versions": [
                                                 {
-                                                    "active": null,
+                                                    "active": true,
                                                     "backend": 1,
                                                     "comment": "",
                                                     "created_at": "2016-04-27T19:40:49",

@@ -13,6 +13,7 @@ import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
+import io.ktor.server.plugins.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -87,7 +88,15 @@ class FastlyClient(apiUrl: URI, apiKeys: Array<String>) {
         }
     }
 
-    //region Dictionary Items
+    /**
+     *Get the active version number from a service
+     * @param service the Service
+     * @return the number of the active service
+     */
+    fun getActiveServiceVersionNumber(service: Service) = service?.versions?.filter { it.isActive() }?.first()?.number
+        ?: throw BadRequestException("No active version found in this service")
+
+//region Dictionary Items
     /**
      * Retrieve a single [DictionaryItem] given service, dictionary ID and item key
      * @param serviceId The service id
@@ -222,9 +231,9 @@ class FastlyClient(apiUrl: URI, apiKeys: Array<String>) {
             }
         }.handleDelete()
     }
-    //endregion
+//endregion
 
-    //region Dictionary
+//region Dictionary
     /**
      * Deletes a dictionary for a particular service and version.
      * @param serviceId The service id
@@ -315,9 +324,9 @@ class FastlyClient(apiUrl: URI, apiKeys: Array<String>) {
             }
         }.handleNullable<List<Dictionary>?>()
     }
-    //endregion
+//endregion
 
-    //region Service
+//region Service
     /**
      * Retrieves the [Service] identified by the passed serviceId
      * @param serviceId The id of the [Service] to request
@@ -330,9 +339,9 @@ class FastlyClient(apiUrl: URI, apiKeys: Array<String>) {
             }
         }.handleNullable<Service?>()
     }
-    //endregion
+//endregion
 
-    //region Version
+//region Version
     /**
      * Create a version for a particular service
      * @param serviceId The service id
@@ -345,7 +354,7 @@ class FastlyClient(apiUrl: URI, apiKeys: Array<String>) {
             }
         }.handle<Version>()
     }
-    //endregion
+//endregion
 }
 
 private suspend inline fun HttpResponse.handleDelete(): JsonElement? {
