@@ -21,6 +21,16 @@ spotlessChangelog {
 println("SpotlessChangelog Version Next: ${spotlessChangelog.versionNext}  Last: ${spotlessChangelog.versionLast}")
 
 scmVersion {
+    useHighestVersion.set(true)
+
+    tag {
+        initialVersion { _, _ -> spotlessChangelog.versionLast }
+
+        versionSeparator.set(".")
+    }
+
+    versionCreator { _, _ -> spotlessChangelog.versionNext }
+
     checks {
         aheadOfRemote.set(false)
     }
