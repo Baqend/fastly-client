@@ -54,7 +54,7 @@ release:
     - git config user.name "Gitlab Ci/CD pipeline"
     - git config user.email no-reply@baqend.com
     - GIT_URL=`echo $CI_PROJECT_URL | sed -e "s|https://|https://oauth2:$PipelineReleasesPAT@|g"` # add authentication via token
-    - ./gradlew createRelease
+    - ./gradlew createRelease -Prelease=true
     - git push --tags $GIT_URL # push via https & Gitlab Project Authentication Token (PAT)
     - ./gradlew publish # publish latest version
   rules:
