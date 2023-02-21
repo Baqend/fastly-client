@@ -58,10 +58,6 @@ dependencies {
 }
 
 tasks {
-    createRelease {
-        dependsOn(changelogBump)
-    }
-
     test {
         useJUnitPlatform()
         testLogging {
