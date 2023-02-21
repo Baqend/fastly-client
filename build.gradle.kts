@@ -4,8 +4,8 @@ plugins {
     `maven-publish`
     java
     kotlin("jvm") version "1.8.10"
-    id("net.researchgate.release") version "3.0.2"
-    id("com.diffplug.spotless-changelog") version "3.0.1"
+    id("com.diffplug.spotless-changelog") version "2.0.1"
+    id("pl.allegro.tech.build.axion-release") version "1.14.4"
 }
 
 spotlessChangelog {
@@ -57,10 +57,16 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:$junitPlatformVersion")
 }
 
-tasks.test {
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
+tasks {
+    createRelease {
+        dependsOn(changelogBump)
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
 }
 
@@ -92,25 +98,5 @@ publishing {
                 create("header", HttpHeaderAuthentication::class)
             }
         }
-    }
-}
-
-configure<net.researchgate.release.ReleaseExtension> {
-    preTagCommitMessage.set("pre tag commit [ci skip]:")
-    tagCommitMessage.set("creating tag:")
-    newVersionCommitMessage.set("new version commit [ci skip]:")
-    buildTasks.set(listOf("changelogBump"))
-    ignoredSnapshotDependencies.set(listOf("net.researchgate:gradle-release"))
-    // this is used by the plugin to select the part of the current version to update
-    versionPatterns = mapOf(
-        // with this pattern we select the patch version
-        """(\d+)([^\d]*$)""" to KotlinClosure2<java.util.regex.Matcher, Project, String>(
-            // this closure replaces the current patch version with: patch + 1 and "-SNAPSHOT" appended
-            { matcher, _ -> matcher.replaceAll("${(matcher.group(0).toInt()) + 1}-SNAPSHOT") }
-        ),
-    )
-    with(git) {
-        requireBranch.set("main")
-        pushToRemote.set("origin")
     }
 }

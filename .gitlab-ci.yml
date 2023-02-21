@@ -10,6 +10,7 @@ include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
 
 stages:  # List of stages for jobs, and their order of execution
+  - prerequisites
   - build
   - test
   - publish
@@ -17,6 +18,13 @@ stages:  # List of stages for jobs, and their order of execution
 before_script:
   - git checkout "$CI_COMMIT_REF_NAME"
   - export GRADLE_USER_HOME=`pwd`/.gradle
+
+release-prerequisites-job: # runs the verifyRelease task from the axion-release plugin
+  stage: prerequisites
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  script:
+    - ./gradlew verifyRelease
 
 build:
   stage: build
@@ -46,7 +54,8 @@ release:
     - git config user.name "Gitlab Ci/CD pipeline"
     - git config user.email no-reply@baqend.com
     - GIT_URL=`echo $CI_PROJECT_URL | sed -e "s|https://|https://oauth2:$PipelineReleasesPAT@|g"` # add authentication via token
-    - gradle release -Prelease=true
-    - gradle publish
+    - ./gradlew createRelease
+    - git push --tags $GIT_URL # push via https & Gitlab Project Authentication Token (PAT)
+    - ./gradlew publish # publish latest version
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
