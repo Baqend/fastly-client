@@ -9,6 +9,21 @@ variables:
 include:
   - template: 'Workflows/MergeRequest-Pipelines.gitlab-ci.yml'
 
+.base-rule:
+  rules:
+    # always run on master/main
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+    # only run pipeline on MRs to prevent duplicated pipelines
+    - if: '$CI_PIPELINE_SOURCE == "push"'
+      when: never
+    # don't run on pushed tags either
+    - if: $CI_COMMIT_TAG
+      when: never
+    # manually triggering is ok
+    - when: manual
+      allow_failure: true
+
 stages:  # List of stages for jobs, and their order of execution
   - prerequisites
   - build
