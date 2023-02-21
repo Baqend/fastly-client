@@ -55,8 +55,8 @@ release:
     - git config user.email no-reply@baqend.com
     - GIT_URL=`echo $CI_PROJECT_URL | sed -e "s|https://|https://oauth2:$PipelineReleasesPAT@|g"` # add authentication via token
     - ./gradlew changelogBump -Prelease=true
-    - git add CHANGELOG.md
-    - git commit -m "update CHANGELOG"
+    - git add .
+    - git commit -m "Bump release version"
     - ./gradlew createRelease
     - git push --tags $GIT_URL # push via https & Gitlab Project Authentication Token (PAT)
     - ./gradlew publish # publish latest version
