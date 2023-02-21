@@ -20,6 +20,12 @@ spotlessChangelog {
 }
 println("SpotlessChangelog Version Next: ${spotlessChangelog.versionNext}  Last: ${spotlessChangelog.versionLast}")
 
+scmVersion {
+    checks {
+        aheadOfRemote.set(false)
+    }
+}
+
 version = spotlessChangelog.versionNext
 val isSnapshot = version.toString().endsWith("-SNAPSHOT")
 
