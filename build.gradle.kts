@@ -26,7 +26,7 @@ scmVersion {
     tag {
         initialVersion { _, _ -> spotlessChangelog.versionLast }
 
-        versionSeparator.set(".")
+        versionSeparator.set("")
     }
 
     versionCreator { _, _ -> spotlessChangelog.versionNext }
