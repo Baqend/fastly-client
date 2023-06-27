@@ -31,7 +31,6 @@ stages:  # List of stages for jobs, and their order of execution
   - publish
 
 before_script:
-  - git checkout "$CI_COMMIT_REF_NAME"
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
 release-prerequisites-job: # runs the verifyRelease task from the axion-release plugin
@@ -60,6 +59,9 @@ test:
     paths:
       - build
       - .gradle
+  artifacts:
+    reports:
+      junit: [ "build/test-results/test/*.xml" ]
 
 # everytime we merge a branch into the main
 release:
