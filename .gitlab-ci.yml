@@ -60,6 +60,9 @@ test:
     paths:
       - build
       - .gradle
+  artifacts:
+    reports:
+      junit: [ "*/build/test-results/*/*.xml" ]
 
 # everytime we merge a branch into the main
 release:
