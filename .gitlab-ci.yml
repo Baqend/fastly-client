@@ -61,7 +61,7 @@ test:
       - .gradle
   artifacts:
     reports:
-      junit: [ "*/build/test-results/*/*.xml" ]
+      junit: [ "build/test-results/test/*.xml" ]
 
 # everytime we merge a branch into the main
 release:
